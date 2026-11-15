@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رقابة 001 — الغيابات</title>
+<style>
+:root{--ink:#172437;--muted:#5a697a;--edge:#dce3ed;--bg:#f5f7fa;--white:#fff;--main:#20578b;--positive:#24744f;--warning:#905d14;--bad:#ae3939}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 system-ui,"Noto Sans Arabic","Tahoma",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid var(--edge);border-radius:10px;padding:10px 13px;background:#fff;color:var(--ink)}
+button:hover{background:#eef3f8}button.primary{background:var(--main);color:white;border-color:var(--main)}button.primary:hover{background:#174572}
+button:disabled{opacity:.45;cursor:not-allowed}.shell{max-width:1080px;margin:auto;padding:16px}.top{background:white;border-bottom:1px solid var(--edge)}
+.top .shell{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.brand{font-weight:800;font-size:20px}.sub{color:var(--muted);font-size:12px}.card{background:white;border:1px solid var(--edge);border-radius:14px;padding:18px;margin-bottom:16px}
+.small{font-size:13px;color:var(--muted)}h1,h2,h3{line-height:1.5;margin:0 0 12px}h1{font-size:24px}h2{font-size:19px}h3{font-size:16px}
+label{display:block;font-size:13px;font-weight:700;margin:9px 0 4px}input,select,textarea{border:1px solid #bfcada;background:white;color:var(--ink);border-radius:9px;padding:10px;width:100%;max-width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid #a6cdec}textarea{min-height:90px;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:1;min-width:130px}.row>.noflex{flex:0 0 auto;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.hidden{display:none!important}
+.login{max-width:450px;margin:6vh auto}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tab.active{background:var(--ink);color:white}
+.kpi{border:1px solid var(--edge);border-radius:12px;padding:14px;background:#fcfdff}.value{font-size:29px;font-weight:800;line-height:1.3}
+.list-item{display:flex;gap:10px;align-items:center;justify-content:space-between;border-top:1px solid #eef0f4;padding:11px 0;flex-wrap:wrap}
+.list-item:first-child{border-top:0}.tag{display:inline-block;padding:2px 9px;border-radius:20px;background:#edf1f5;color:#324256;font-size:12px}
+.tag.ok{background:#e3f4e9;color:#205d40}.tag.warn{background:#fff1d9;color:#875611}.tag.bad{background:#ffebea;color:#9b302e}
+.roster{max-height:550px;overflow:auto;border:1px solid var(--edge);border-radius:10px}.person{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid #eef1f4}
+.person:last-child{border-bottom:0}.person select{width:105px}.person .name{font-weight:600}.notice{border:1px solid #e5d3ad;background:#fff9ed;padding:12px;border-radius:10px;color:#674616}
+.error{border-color:#ebbbb9;background:#fff1f1;color:#9a3232}.success{border-color:#bbe4ce;background:#effaf3;color:#205f42}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:570px}th,td{padding:9px;border-bottom:1px solid var(--edge);text-align:right;vertical-align:top}th{background:#eef1f6}
+.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.actions{display:flex;gap:7px;flex-wrap:wrap}
+.muted{color:var(--muted)}.mono{direction:ltr;unicode-bidi:isolate;display:inline-block}.spacer{height:10px}
+#toast{position:fixed;bottom:18px;left:18px;right:18px;max-width:580px;margin:auto;z-index:99;display:none;box-shadow:0 3px 20px #10182020}
+#toast.show{display:block}.fit{max-width:280px}.line{border-top:1px solid var(--edge);padding-top:12px;margin-top:12px}
+hr{border:0;border-top:1px solid var(--edge);margin:18px 0}.foot{font-size:12px;color:var(--muted);padding:8px 0 24px}
+@media(max-width:620px){.shell{padding:11px}.card{padding:13px}.brand{font-size:18px}h1{font-size:20px}.person{padding:8px}.person .name{font-size:14px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="shell">
+  <div><div class="brand">رقابة 001 — متابعة الغيابات</div><div class="sub">توثيق الحصص · استمرارية التكوين · متابعة المفتش</div></div>
+  <div class="row" style="flex:0 0 auto"><span id="userLabel" class="small"></span><button id="logoutBtn" class="hidden" data-action="logout">خروج</button></div>
+</div></header>
+<main class="shell">
+<section id="loginView" class="card login">
+  <h1>الدخول إلى النظام</h1>
+  <p class="small">رمز الدخول يمنحه مسؤول التطبيق. لا تُنشر بيانات المتكونين على GitHub.</p>
+  <form id="loginForm">
+    <label for="username">اسم المستخدم</label><input id="username" autocomplete="username" required maxlength="30" placeholder="مثال: morakib1">
+    <label for="password">رمز الدخول</label><input id="password" autocomplete="current-password" required type="password">
+    <div class="spacer"></div><button class="primary" id="loginBtn" type="submit" style="width:100%">دخول</button>
+  </form>
+  <p class="small">إذا لم يُفعّل المشروع في Google Apps Script، فهذه الصفحة ليست متصلة بقاعدة البيانات.</p>
+</section>
+<section id="appView" class="hidden">
+  <div class="card">
+    <div class="toolbar">
+      <div><h2 style="margin:0">مساحة العمل</h2><span id="roleLabel" class="small"></span></div>
+      <div class="row">
+        <div><label for="group">الفوج</label><select id="group"></select></div>
+        <div><label for="workDate">تاريخ المتابعة</label><input id="workDate" type="date"></div>
+        <button class="noflex" style="align-self:end" data-action="refresh">تحديث</button>
+      </div>
+    </div>
+  </div>
+  <nav id="tabs" class="tabs" aria-label="وظائف التطبيق"></nav>
+  <div id="content"></div>
+  <div class="foot">السجلات غير المكتملة لا تُحسب حضورًا. الحصة غير المنجزة تُوثق مستقلّة عن غياب المتكون.</div>
+</section>
+</main>
+<div id="toast" class="card" role="alert"></div>
+<script>
+(function(){
+  'use strict';
+  const $=s=>document.querySelector(s);
+  const escapeHtml=s=>String(s===undefined||s===null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const dayNames=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  let token='',ctx=null,tab='entry',groupId='',date='',editing=null,absences={},pending=false;
+  const roleNames={admin:'مسؤول النظام',monitor:'المراقب',inspector:'المفتش'};
+  const statusNames={HELD:'منجزة',CANCELLED:'لم تُنجز'};
+  function toast(text,error){
+    let el=$('#toast');el.className='card show '+(error?'notice error':'notice success');el.textContent=text;
+    setTimeout(()=>{el.classList.remove('show');},5500);
+  }
+  function busy(on){pending=on;document.querySelectorAll('button').forEach(b=>{if(b.dataset.action!=='logout')b.disabled=on;});}
+  function call(action,payload){
+    return new Promise((resolve,reject)=>{
+      if(!window.google||!google.script||!google.script.run)return reject(new Error('التطبيق غير منشور بعد في Google Apps Script.'));
+      google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>reject(new Error(e&&e.message?e.message:'تعذر الاتصال بالخادم')))
+        .api(action,payload||{},token||'');
+    });
+  }
+  async function run(action,payload,done){
+    if(pending)return;
+    busy(true);
+    try{let r=await call(action,payload);if(done)await done(r);return r;}
+    catch(e){toast(e.message,true);return null;}
+    finally{busy(false);}
+  }
+  function dateNow(){let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function dateObj(d){return new Date(d+'T12:00:00Z');}
+  function plusDays(d,n){let x=dateObj(d);x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10);}
+  function weekStart(d){return plusDays(d,-dateObj(d).getUTCDay());}
+  function startMonth(d){return d.slice(0,7)+'-01';}
+  function endMonth(d){let x=dateObj(startMonth(d));x.setUTCMonth(x.getUTCMonth()+1);x.setUTCDate(x.getUTCDate()-1);return x.toISOString().slice(0,10);}
+  function timeNum(t){let z=String(t).split(':');return Number(z[0])*60+Number(z[1]);}
+  function hhEnd(start,dur){let n=timeNum(start)+Number(dur)*60;return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0');}
+  function activeSlot(s,d){return Number(s.weekday)===dateObj(d).getUTCDay()&&(!s.valid_from||String(s.valid_from)<=d)&&(!s.valid_to||String(s.valid_to)>=d);}
+  function eligible(s,d){return s.status!=='REVIEW'&&(s.status==='ACTIVE'||(s.status==='INACTIVE'&&s.end_date))&&(!s.start_date||String(s.start_date)<=d)&&(!s.end_date||String(s.end_date)>=d);}
+  function group(){return ctx&&ctx.groups.find(x=>x.id===groupId);}
+  function groupStudents(){return ctx.students.filter(s=>s.group_id===groupId);}
+  function sessionKey(slot,d){return groupId+'|'+d+'|'+slot.id;}
+  function findSession(slot,d){return ctx.sessions.find(x=>x.session_key===sessionKey(slot,d));}
+  function getAttendance(s){return s?ctx.attendance.filter(a=>a.session_key===s.session_key&&Number(a.version)===Number(s.version)):[];}
+  function slotsForDay(d){return ctx.schedule.filter(s=>s.group_id===groupId&&activeSlot(s,d)).sort((a,b)=>timeNum(a.start)-timeNum(b.start));}
+  function tag(text,kind){return '<span class="tag '+(kind||'')+'">'+escapeHtml(text)+'</span>';}
+  async function refresh(){
+    if(!date)date=dateNow();
+    const raw=await call('context',{from:startMonth(date),to:endMonth(date)});
+    ctx=raw;
+    if(!ctx.groups.length)throw new Error('لا توجد أفواج مصرح لك بمتابعتها.');
+    if(!ctx.groups.some(x=>x.id===groupId))groupId=ctx.groups[0].id;
+    $('#group').innerHTML=ctx.groups.map(g=>'<option value="'+escapeHtml(g.id)+'">'+escapeHtml(g.name)+'</option>').join('');
+    $('#group').value=groupId;
+    $('#workDate').value=date;
+    $('#userLabel').textContent=ctx.user.username;
+    $('#roleLabel').textContent=roleNames[ctx.user.role]||ctx.user.role;
+    $('#logoutBtn').classList.remove('hidden');
+    $('#loginView').classList.add('hidden');
+    $('#appView').classList.remove('hidden');
+    if(ctx.user.role==='inspector'&&tab==='entry')tab='dashboard';
+    render();
+  }
+  function renderTabs(){
+    const list=[{id:'entry',label:'تسجيل الحصص',roles:['admin','monitor']},{id:'dashboard',label:'المتابعة والمؤشرات',roles:['admin','monitor','inspector']},{id:'messages',label:'المراسلات',roles:['admin','monitor','inspector']},{id:'admin',label:'الإدارة',roles:['admin']}];
+    $('#tabs').innerHTML=list.filter(x=>x.roles.includes(ctx.user.role)).map(x=>'<button class="tab '+(tab===x.id?'active':'')+'" data-action="tab" data-value="'+x.id+'">'+x.label+'</button>').join('');
+  }
+  function render(){renderTabs();let c=$('#content');if(tab==='entry')return renderEntry(c);if(tab==='dashboard')return renderDashboard(c);if(tab==='messages')return renderMessages(c);if(tab==='admin')return renderAdmin(c);}
+  function renderEntry(root){
+    if(editing)return renderEditor(root);
+    let slots=slotsForDay(date),all=ctx.schedule.filter(s=>s.group_id===groupId);
+    let html='<div class="card"><div class="toolbar"><div><h2>حصص يوم '+escapeHtml(date)+'</h2><div class="small">'+dayNames[dateObj(date).getUTCDay()]+' — اختر الحصة وسجل الغائبين فقط</div></div>';
+    if(slots.length)html+='<button data-action="cancelDay">توثيق توقف جميع حصص اليوم</button>';
+    html+='</div><div class="spacer"></div>';
+    if(!all.length)html+='<div class="notice">لم يُضبط جدول حصص هذا الفوج بعد. يحتاج المسؤول إلى إدخال الحصص الأسبوعية قبل البدء.</div>';
+    else if(!slots.length)html+='<div class="notice">لا توجد حصص مبرمجة لهذا اليوم وفق الجدول الحالي.</div>';
+    slots.forEach(s=>{
+      let rec=findSession(s,date);
+      let description=rec?(rec.status==='HELD'?tag('أُنجزت','ok')+' '+getAttendance(rec).length+' غائب/غائبة':tag('لم تُنجز','warn')+' '+escapeHtml(rec.reason)):tag('لم تصل البيانات','bad');
+      html+='<div class="list-item"><div><strong class="mono">'+escapeHtml(s.start)+'–'+escapeHtml(hhEnd(s.start,s.duration))+'</strong> · '+escapeHtml(s.duration)+' ساعة<br>'+description+'</div><button data-action="openSlot" data-id="'+escapeHtml(s.id)+'">'+(rec?'عرض / تصحيح':'توثيق الحصة')+'</button></div>';
+    });
+    html+='</div>';
+    root.innerHTML=html;
+  }
+  function renderEditor(root){
+    const slot=ctx.schedule.find(s=>s.id===editing),rec=findSession(slot,date);
+    if(!slot){editing=null;renderEntry(root);return;}
+    const students=groupStudents().filter(s=>eligible(s,date)).sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+    const isCancelled=rec&&rec.status==='CANCELLED';
+    root.innerHTML='<div class="card">'
+     +'<div class="toolbar"><div><h2>توثيق الحصة</h2><div class="small">'+escapeHtml(date)+'، '+escapeHtml(slot.start)+'، المدة '+escapeHtml(slot.duration)+' ساعة</div></div><button data-action="back">الرجوع للحصص</button></div>'
+     +'<label for="sessionStatus">حالة الحصة</label><select id="sessionStatus"><option value="HELD">أُنجزت</option><option value="CANCELLED">لم تُنجز</option></select>'
+     +'<div id="cancelReasonWrap" class="hidden"><label for="cancelReason">سبب عدم الإنجاز</label><select id="cancelReason"><option>امتحانات خارجية</option><option>غياب الأستاذ</option><option>عدم توفر القاعة أو الوسائل</option><option>عطلة أو تعليق نشاط</option><option>سبب تنظيمي آخر</option></select><label for="reasonOther">تفصيل السبب (عند الحاجة)</label><input id="reasonOther" maxlength="150" placeholder="ملاحظات إضافية حول التوقف"></div>'
+     +'<div id="rosterWrap"><p class="small">اختر الغائب فقط. القيمة الافتراضية صفر (حاضر)، وفي حصة الساعتين يمكن تسجيل ساعة واحدة من الغياب.</p>'
+     +(students.length?'<div class="roster">'+students.map(s=>{
+       let current=Number(absences[s.id]||0);
+       return '<div class="person"><span class="name">'+escapeHtml(s.name)+'</span><select aria-label="غياب '+escapeHtml(s.name)+'" data-abs-id="'+escapeHtml(s.id)+'">'
+        +[0,1,2].filter(n=>n<=Number(slot.duration)).map(n=>'<option value="'+n+'" '+(current===n?'selected':'')+'>'+(n===0?'حاضر':n+' ساعة غياب')+'</option>').join('')+'</select></div>';
+     }).join('')+'</div>':'<div class="notice error">لا توجد قائمة متكونين معتمدة في هذا التاريخ. اعتمد الأسماء أولًا ولا تسجل حضورًا افتراضيًا.</div>')
+     +'<div class="line" id="countPanel"></div></div>'
+     +'<label for="sessionNote">ملاحظة اختيارية</label><textarea id="sessionNote" maxlength="500" placeholder="مثال: وصلت قائمة الأستاذ متأخرة"></textarea>'
+     +'<div class="spacer"></div><div class="actions"><button class="primary" data-action="saveSlot" '+(!students.length?'disabled':'')+'>حفظ وتوثيق الحصة</button><button data-action="back">إلغاء</button></div>'
+     +'<p class="small">عند التصحيح تُحفظ نسخة جديدة مع اسم المراقب وتاريخ العملية، دون حذف السجل السابق.</p>'
+     +'</div>';
+    $('#sessionStatus').value=isCancelled?'CANCELLED':'HELD';
+    $('#sessionNote').value=rec?String(rec.notes||''):'';
+    if(isCancelled){let r=String(rec.reason||'');let opts=Array.from($('#cancelReason').options).map(x=>x.value);$('#cancelReason').value=opts.includes(r)?r:'سبب تنظيمي آخر';if(!opts.includes(r))$('#reasonOther').value=r;}
+    updateFormStatus();
+  }
+  function updateFormStatus(){
+    const cancelled=$('#sessionStatus')&&$('#sessionStatus').value==='CANCELLED';
+    if($('#cancelReasonWrap'))$('#cancelReasonWrap').classList.toggle('hidden',!cancelled);
+    if($('#rosterWrap'))$('#rosterWrap').classList.toggle('hidden',cancelled);
+    if(!cancelled&&$('#countPanel')){let n=Object.values(absences).filter(x=>Number(x)>0).length,h=Object.values(absences).reduce((sum,v)=>sum+Number(v||0),0);
+     $('#countPanel').textContent='عدد الغائبين: '+n+' — مجموع ساعات غياب هذه الحصة: '+h;}
+  }
+  function calcStats(from,to){
+    let planned=0,registered=0,held=0,cancelled=0,unrecorded=0,executedHours=0,cancelledHours=0,absentHours=0,possibleHours=0;
+    let missing=[],details=[],cursor=from;
+    while(cursor<=to){
+      slotsForDay(cursor).forEach(slot=>{
+        planned++;let rec=findSession(slot,cursor);
+        if(!rec){unrecorded++;missing.push({date:cursor,start:slot.start});}
+        else {registered++;
+          if(rec.status==='HELD'){held++;executedHours+=Number(rec.duration);
+            const students=groupStudents().filter(s=>eligible(s,cursor));
+            possibleHours+=Number(rec.duration)*students.length;
+            const hours=getAttendance(rec).reduce((n,a)=>n+Number(a.absence_hours||0),0);
+            absentHours+=hours;
+            details.push({date:cursor,slot:slot,absentHours:hours,registered:students.length,rec:rec});
+          }else if(rec.status==='CANCELLED'){cancelled++;cancelledHours+=Number(rec.duration);}
+        }
+      });
+      cursor=plusDays(cursor,1);
+    }
+    return {planned,registered,held,cancelled,unrecorded,executedHours,cancelledHours,absentHours,possibleHours,missing,details};
+  }
+  function metric(label,note,value){return '<div class="kpi"><div class="small">'+label+'</div><div class="value">'+escapeHtml(value)+'</div><div class="small">'+escapeHtml(note||'')+'</div></div>';}
+  function renderDashboard(root){
+    let start=weekStart(date),end=plusDays(start,6),ws=calcStats(start,end),ms=calcStats(startMonth(date),endMonth(date));
+    const g=group(),override=ctx.overrides.find(x=>x.group_id===groupId&&x.week_start===start);
+    const declared=override?Number(override.planned_hours):(g.weekly_hours===''?null:Number(g.weekly_hours));
+    const scheduled=ctx.schedule.filter(x=>x.group_id===groupId&&activeSlot(x,start) || false).length;
+    const pct=ws.possibleHours?((ws.absentHours/ws.possibleHours)*100).toFixed(1)+'%':'غير قابل للحساب';
+    let html='<div class="card"><h2>متابعة الأسبوع '+escapeHtml(start)+' إلى '+escapeHtml(end)+'</h2><div class="grid">'
+      +metric('الحصص المبرمجة','بحسب الجدول الأسبوعي',ws.planned)
+      +metric('الحصص الموثقة','منجزة أو غير منجزة',ws.registered)
+      +metric('الحصص دون توثيق','لا تُعامل كحضور كامل',ws.unrecorded)
+      +metric('ساعات التكوين المنجزة','من الحصص المؤكدة',ws.executedHours)
+      +metric('ساعات عدم الإنجاز','الحصص المصرح بتوقفها',ws.cancelledHours)
+      +metric('ساعات غياب المتكونين','من الحصص المنجزة',ws.absentHours)
+      +metric('نسبة الغياب','الغياب / مجموع ساعات الحضور المطلوبة',pct)
+      +metric('الحجم الساعي المعلن','المقرر لهذا الأسبوع',declared===null?'لم يُحدد':declared+' ساعة')
+      +'</div>';
+    if(declared!==null&&declared!==ws.plannedHours){} 
+    const hoursPlanned=Array.from({length:7},(_,i)=>slotsForDay(plusDays(start,i)).reduce((n,s)=>n+Number(s.duration),0)).reduce((a,b)=>a+b,0);
+    html+='<p class="small">مجموع ساعات الحصص وفق الجدول الأسبوعي: '+hoursPlanned+' ساعة. '+(declared===null?'يلزم تعيين الحجم الساعي المعلن.':declared===hoursPlanned?'الجدول مطابق للحجم الساعي المعلن.':'تنبيه: يوجد فرق بين الحجم المعلن ومجموع حصص الجدول.')+'</p></div>';
+    html+='<div class="card"><h2>المؤشرات الشهرية — '+escapeHtml(date.slice(0,7))+'</h2><div class="grid">'
+      +metric('الحصص المنجزة',null,ms.held)
+      +metric('الحصص غير المنجزة',null,ms.cancelled)
+      +metric('الحصص المجهولة الحالة','يلزم استكمال التوثيق',ms.unrecorded)
+      +metric('ساعات غياب المتكونين','لا تشمل الحصص المتوقفة',ms.absentHours)
+      +'</div></div>';
+    html+='<div class="card"><h2>الحصص التي لم تصل بياناتها هذا الأسبوع</h2>'
+      +(ws.missing.length?'<div class="table-wrap"><table><thead><tr><th>التاريخ</th><th>بداية الحصة</th><th>الحالة</th></tr></thead><tbody>'
+      +ws.missing.map(x=>'<tr><td>'+escapeHtml(x.date)+'</td><td>'+escapeHtml(x.start)+'</td><td>غير موثقة</td></tr>').join('')+'</tbody></table></div>':
+        '<p class="small">لا توجد حصص غير موثقة ضمن الجدول المحدد لهذا الأسبوع.</p>')
+      +'</div>';
+    html+='<div class="card"><h2>ساعات الغياب لكل متكون — الشهر</h2><div class="table-wrap"><table><thead><tr><th>المتكون</th><th>ساعات الغياب الموثقة</th><th>ساعات الحضور المطلوبة في الحصص المنجزة</th><th>النسبة</th></tr></thead><tbody>';
+    const map={};groupStudents().forEach(s=>map[s.id]={s:s,absent:0,possible:0});
+    ms.details.forEach(d=>{
+      groupStudents().filter(s=>eligible(s,d.date)).forEach(s=>{map[s.id].possible+=Number(d.slot.duration);});
+      getAttendance(d.rec).forEach(a=>{if(map[a.student_id])map[a.student_id].absent+=Number(a.absence_hours||0);});
+    });
+    const vals=Object.values(map).filter(x=>x.possible>0).sort((a,b)=>b.absent-a.absent);
+    html+=vals.map(x=>'<tr><td>'+escapeHtml(x.s.name)+'</td><td>'+x.absent+'</td><td>'+x.possible+'</td><td>'+(100*x.absent/x.possible).toFixed(1)+'%</td></tr>').join('');
+    html+='</tbody></table></div>'+(vals.length?'':'<div class="notice">لم تُسجّل حصص منجزة لمتكونين معتمدين بعد.</div>')+'</div>';
+    root.innerHTML=html;
+  }
+  function renderMessages(root){
+    let messages=ctx.messages.filter(m=>m.group_id===groupId).slice(-35).reverse();
+    root.innerHTML='<div class="card"><h2>التواصل بين المراقب والمفتش</h2><label for="msgBody">إرسال ملاحظة مرتبطة بالفوج</label>'
+      +'<textarea id="msgBody" maxlength="500" placeholder="مثال: توقف التكوين هذا اليوم بسبب امتحانات خارجية، وننتظر قرار تعويض الحصص."></textarea>'
+      +'<div class="spacer"></div><button class="primary" data-action="sendMessage">إرسال الملاحظة</button>'
+      +'<p class="small">تُحفظ الملاحظات في قاعدة البيانات وتظهر للمستخدمين المخولين لهذا الفوج.</p></div>'
+      +'<div class="card"><h2>آخر المراسلات</h2>'
+      +(messages.length?messages.map(m=>'<div class="list-item"><div><strong>'+escapeHtml(m.actor)+'</strong> '+tag(roleNames[m.role]||m.role)+' <span class="small mono">'+escapeHtml(m.at)+'</span><div>'+escapeHtml(m.body)+'</div></div></div>').join(''):'<p class="muted">لا توجد مراسلات بعد.</p>')
+      +'</div>';
+  }
+  function renderAdmin(root){
+    const g=group(),weekdayOpts=dayNames.map((n,i)=>'<option value="'+i+'">'+n+'</option>').join('');
+    const review=groupStudents().filter(s=>s.status==='REVIEW'),active=groupStudents().filter(s=>s.status==='ACTIVE');
+    let slots=ctx.schedule.filter(s=>s.group_id===groupId&&(!s.valid_to||String(s.valid_to)>=date)).sort((a,b)=>Number(a.weekday)-Number(b.weekday)||timeNum(a.start)-timeNum(b.start));
+    let html='<div class="card"><h2>ضبط الفوج والحجم الساعي</h2><p class="small">لا يوجد مقام حسابي ثابت. الحجم الأسبوعي من 1 إلى 36 ساعة ويمكن تغييره عند الحاجة.</p>'
+    +'<div class="row"><div><label>الحجم الساعي الأسبوعي المبرمج</label><input type="number" id="weeklyHours" min="1" max="36" step="1" value="'+escapeHtml(g.weekly_hours||'')+'"></div>'
+    +'<button style="align-self:end" class="primary noflex" data-action="setHours">حفظ الساعات</button></div>'
+    +'<hr><h3>استثناء خاص بأسبوع واحد</h3><div class="row"><div><label>أحد بداية الأسبوع</label><input id="overrideWeek" type="date" value="'+escapeHtml(weekStart(date))+'"></div>'
+    +'<div><label>ساعات الأسبوع الاستثنائية</label><input id="overrideHours" type="number" min="0" max="36" step="1" value="'+escapeHtml(g.weekly_hours||'')+'"></div>'
+    +'<button class="noflex" style="align-self:end" data-action="setOverride">حفظ الاستثناء</button></div>'
+    +'<p class="small">استثناء الأسبوع لا يغير جدول الحصص تلقائيًا. يجب تسجيل الحصص التي لم تُنجز أو تعديل الجدول المستقبلي.</p></div>';
+    html+='<div class="card"><h2>الجدول الأسبوعي للحصص</h2><div class="row">'
+      +'<div><label>اليوم</label><select id="newWeekday">'+weekdayOpts+'</select></div>'
+      +'<div><label>البدء</label><input id="newStart" type="time" value="08:00"></div>'
+      +'<div><label>المدة</label><select id="newDuration"><option value="2">ساعتان</option><option value="1">ساعة</option></select></div>'
+      +'<div><label>بدء سريان الحصة</label><input id="newFrom" type="date" value="'+escapeHtml(date)+'"></div></div>'
+      +'<button class="primary" data-action="addSlot">إضافة الحصة</button>'
+      +'<p class="small">تُمنع الحصص المتداخلة زمنيًا. لا تُعدّل السجلات التاريخية عند إيقاف حصة.</p>'
+      +(slots.length?slots.map(s=>'<div class="list-item"><div>'+dayNames[Number(s.weekday)]+' — <span class="mono">'+escapeHtml(s.start)+'–'+escapeHtml(hhEnd(s.start,s.duration))+'</span> ('+escapeHtml(s.duration)+' س)<div class="small">اعتبارًا من '+escapeHtml(s.valid_from||'البداية')+'</div></div><button data-action="closeSlot" data-id="'+escapeHtml(s.id)+'">إيقاف من تاريخ</button></div>').join(''):'<p class="notice">الجدول الأسبوعي فارغ؛ أدخل حصص الفوج أولًا.</p>')
+      +'</div>';
+    html+='<div class="card"><h2>قائمة المتكونين</h2><p class="small">'+active.length+' معتمدون، '+review.length+' بانتظار المراجعة. الأسماء المستوردة لا تصبح نشطة دون اعتماد فردي.</p>'
+      +'<div class="row"><div><label>تاريخ نفاذ تغيير الحالة</label><input id="studentEffective" type="date" value="'+escapeHtml(date)+'"></div>'
+      +'<div><label>إضافة متكون جديد</label><input id="newStudent" maxlength="100" placeholder="الاسم واللقب"></div>'
+      +'<button class="noflex" style="align-self:end" data-action="addStudent">إضافة</button></div>'
+      +'<div style="max-height:420px;overflow:auto">';
+    groupStudents().sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar')).forEach(s=>{
+      let label=s.status==='ACTIVE'?tag('نشط','ok'):s.status==='REVIEW'?tag('بانتظار المراجعة','warn'):tag('غير نشط');
+      html+='<div class="list-item"><div>'+escapeHtml(s.name)+'<br>'+label+'</div><div class="actions">'
+      +(s.status!=='ACTIVE'?'<button data-action="studentStatus" data-id="'+escapeHtml(s.id)+'" data-value="ACTIVE">اعتماد</button>':'')
+      +(s.status!=='INACTIVE'?'<button data-action="studentStatus" data-id="'+escapeHtml(s.id)+'" data-value="INACTIVE">غير نشط</button>':'')
+      +'</div></div>';
+    });
+    html+='</div></div>';
+    html+='<div class="card"><h2>إنشاء حساب للمراقب أو المفتش</h2><div class="row">'
+      +'<div><label>اسم المستخدم</label><input id="newUsername" maxlength="30" placeholder="morakib1"></div>'
+      +'<div><label>الدور</label><select id="newRole"><option value="monitor">مراقب</option><option value="inspector">مفتش</option><option value="admin">مسؤول آخر</option></select></div>'
+      +'</div><label>المراقب يُربط بالفوج الحالي؛ المفتش له صلاحية متابعة الأفواج كافة في هذه القاعدة</label>'
+      +'<button class="primary" data-action="createUser">إنشاء الحساب وإظهار رمز الدخول مرة واحدة</button>'
+      +'<div id="credentialBox" class="hidden notice success" style="margin-top:10px;word-break:break-all"></div></div>';
+    root.innerHTML=html;
+  }
+  async function onLogin(e){
+    e.preventDefault();
+    let username=$('#username').value,password=$('#password').value;
+    await run('login',{username,password},async r=>{
+      token=r.token;
+      try{sessionStorage.setItem('rakaba_token',token);}catch(e){}
+      $('#password').value='';
+      date=dateNow();
+      await refresh();
+      toast('تم الدخول بنجاح.');
+    });
+  }
+  async function handleAction(el){
+    const a=el.dataset.action;
+    if(a==='logout'){token='';ctx=null;try{sessionStorage.removeItem('rakaba_token');}catch(e){}$('#appView').classList.add('hidden');$('#loginView').classList.remove('hidden');$('#logoutBtn').classList.add('hidden');return;}
+    if(a==='tab'){editing=null;tab=el.dataset.value;render();return;}
+    if(a==='refresh'){await run('context',{from:startMonth(date),to:endMonth(date)},async r=>{ctx=r;render();toast('تم تحديث البيانات.');});return;}
+    if(a==='openSlot'){
+      editing=el.dataset.id;absences={};
+      const slot=ctx.schedule.find(x=>x.id===editing),rec=findSession(slot,date);
+      if(rec)getAttendance(rec).forEach(x=>absences[x.student_id]=Number(x.absence_hours));
+      render();return;
+    }
+    if(a==='back'){editing=null;absences={};render();return;}
+    if(a==='saveSlot'){
+      const slot=ctx.schedule.find(s=>s.id===editing),rec=findSession(slot,date),status=$('#sessionStatus').value;
+      const students=groupStudents().filter(s=>eligible(s,date));
+      if(status==='HELD'&&!students.length)return toast('يجب اعتماد قائمة المتكونين قبل تسجيل الحضور.',true);
+      const abs=Object.entries(absences).filter(x=>Number(x[1])>0).map(x=>({studentId:x[0],hours:Number(x[1])}));
+      const reason=status==='CANCELLED'?($('#reasonOther').value.trim()||$('#cancelReason').value):'';
+      await run('saveSession',{groupId,date,slotId:slot.id,status,reason,note:$('#sessionNote').value,absences:abs,expectedVersion:rec?rec.version:0},async r=>{
+        editing=null;absences={};await refresh();toast('حُفظت الحصة والنسخة رقم '+r.version+'.');
+      });return;
+    }
+    if(a==='cancelDay'){
+      let reason=window.prompt('سبب توقف جميع الحصص المبرمجة (مثال: امتحانات خارجية):','امتحانات خارجية');
+      if(reason===null)return;
+      await run('cancelDay',{groupId,date,reason},async r=>{await refresh();toast('تم توثيق '+r.count+' حصص في هذا اليوم.');});return;
+    }
+    if(a==='sendMessage'){let body=$('#msgBody').value.trim();await run('sendMessage',{groupId,body},async()=>{await refresh();toast('حُفظت الملاحظة وأصبحت متاحة للمفتش والمراقب.');});return;}
+    if(a==='setHours'){await run('setWeeklyHours',{groupId,hours:Number($('#weeklyHours').value)},async()=>{await refresh();toast('حُفظ الحجم الساعي المعلن.');});return;}
+    if(a==='setOverride'){await run('setWeeklyOverride',{groupId,weekStart:$('#overrideWeek').value,hours:Number($('#overrideHours').value),comment:'تعديل برمجة أسبوعي'},async()=>{await refresh();toast('حُفظ حجم الأسبوع الاستثنائي.');});return;}
+    if(a==='addSlot'){await run('addSlot',{groupId,weekday:Number($('#newWeekday').value),start:$('#newStart').value,duration:Number($('#newDuration').value),from:$('#newFrom').value},async()=>{await refresh();toast('أُضيفت الحصة إلى الجدول الأسبوعي.');});return;}
+    if(a==='closeSlot'){
+      const end=window.prompt('آخر تاريخ تسري فيه هذه الحصة، بصيغة YYYY-MM-DD:',date);
+      if(end===null)return;
+      await run('deactivateSlot',{slotId:el.dataset.id,endDate:end},async()=>{await refresh();toast('سُجّل تاريخ انتهاء الحصة.');});return;
+    }
+    if(a==='studentStatus'){
+      const status=el.dataset.value,eff=$('#studentEffective').value;
+      if(!window.confirm(status==='ACTIVE'?'هل تحققت من الوضعية الحالية للمتكون وتريد اعتماده؟':'هل تريد إنهاء نشاط هذا المتكون بتاريخ '+eff+'؟'))return;
+      await run('setStudentStatus',{studentId:el.dataset.id,status,effectiveDate:eff},async()=>{await refresh();toast('تم تحديث وضعية المتكون.');});return;
+    }
+    if(a==='addStudent'){await run('addStudent',{groupId,name:$('#newStudent').value,startDate:$('#studentEffective').value},async()=>{await refresh();toast('أضيف المتكون إلى القائمة المعتمدة.');});return;}
+    if(a==='createUser'){
+      const username=$('#newUsername').value,role=$('#newRole').value,groups=role==='monitor'?groupId:'*';
+      await run('createUser',{username,role,groups},r=>{
+        const box=$('#credentialBox');box.classList.remove('hidden');
+        box.textContent='اسم المستخدم: '+r.username+' | رمز الدخول (يظهر الآن فقط): '+r.password+' — سلّم الرمز للمستخدم المعني بطريقة آمنة.';
+      });return;
+    }
+  }
+  document.addEventListener('click',e=>{const el=e.target.closest('[data-action]');if(el)handleAction(el).catch(x=>toast(x.message,true));});
+  document.addEventListener('change',e=>{
+    if(e.target.id==='group'){groupId=e.target.value;editing=null;render();}
+    else if(e.target.id==='workDate'){date=e.target.value||dateNow();editing=null;run('context',{from:startMonth(date),to:endMonth(date)},async r=>{ctx=r;render();});}
+    else if(e.target.id==='sessionStatus'){updateFormStatus();}
+    else if(e.target.dataset.absId){absences[e.target.dataset.absId]=Number(e.target.value);updateFormStatus();}
+  });
+  $('#loginForm').addEventListener('submit',onLogin);
+  (async function boot(){
+    try{token=sessionStorage.getItem('rakaba_token')||'';}catch(e){}
+    if(token){date=dateNow();try{await refresh();}catch(e){token='';try{sessionStorage.removeItem('rakaba_token');}catch(x){}$('#loginView').classList.remove('hidden');}}
+  })();
+})();
+</script>
+</body>
+</html>
