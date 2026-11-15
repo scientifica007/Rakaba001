@@ -205,6 +205,10 @@ hr{border:0;border-top:1px solid var(--edge);margin:18px 0}.foot{font-size:12px;
   }
   function metric(label,note,value){return '<div class="kpi"><div class="small">'+label+'</div><div class="value">'+escapeHtml(value)+'</div><div class="small">'+escapeHtml(note||'')+'</div></div>';}
   function renderDashboard(root){
+    if(!ctx.schedule.some(s=>s.group_id===groupId && (!s.valid_to||String(s.valid_to)>=startMonth(date)))){
+      root.innerHTML='<div class="card notice"><h2>لم يُعتمد جدول حصص هذا الفوج</h2><p>لا يمكن قياس اكتمال متابعة الغيابات أو عدد الحصص غير الموثقة دون جدول زمني. يجب على المسؤول ضبط الحصص أولًا.</p></div>';
+      return;
+    }
     let start=weekStart(date),end=plusDays(start,6),ws=calcStats(start,end),ms=calcStats(startMonth(date),endMonth(date));
     const g=group(),override=ctx.overrides.find(x=>x.group_id===groupId&&x.week_start===start);
     const declared=override?Number(override.planned_hours):(g.weekly_hours===''?null:Number(g.weekly_hours));
