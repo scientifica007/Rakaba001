@@ -175,14 +175,18 @@ function cancelDay_(u,p) {
     const slots=rows_('Schedule').filter(s=>s.group_id===groupId&&inDate_(s,date));
     assert_(slots.length>0,'لا توجد حصص مبرمجة في هذا اليوم.');
     const existing=latest_(rows_('Sessions'));
-    const held=slots.some(s=>(existing[groupId+'|'+date+'|'+s.id]||{}).status==='HELD');
-    assert_(!held,'اليوم يتضمن حصصًا مسجلة على أنها منجزة. عدّلها بصورة منفردة أولًا.');
+    let affected=0;
     slots.forEach(s=>{
       const key=groupId+'|'+date+'|'+s.id;
       const old=existing[key];
-      if(!old||old.status!=='CANCELLED'||old.reason!==reason)record_(u,{groupId:groupId,date:date,slotId:s.id,status:'CANCELLED',reason:reason,expectedVersion:old?old.version:0},true);
+      // لا نستبدل حصة أُنجزت بتوقف جماعي؛ يعالجها المراقب منفردة عند وجود خطأ.
+      if(old&&old.status==='HELD')return;
+      if(!old||old.status!=='CANCELLED'||old.reason!==reason) {
+        record_(u,{groupId:groupId,date:date,slotId:s.id,status:'CANCELLED',reason:reason,expectedVersion:old?old.version:0},true);
+        affected++;
+      }
     });
-    return {count:slots.length};
+    return {count:affected};
   });
 }
 function updateGroup_(u,p) {
