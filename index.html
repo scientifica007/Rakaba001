@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="color-scheme" content="light" />
+<title>رقابة 001 | تجربة الهاتف</title>
+<style>
+:root{--bg:#f4f7fb;--surface:#fff;--text:#172b40;--sub:#526578;--line:#dfe5ed;--accent:#1d557b;--accent-light:#e9f1f8;--green:#23704c;--green-bg:#e7f7ee;--amber:#93601e;--amber-bg:#fff3db;--red:#a63a3a;--red-bg:#fff0f0;--radius:16px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:system-ui,-apple-system,'Segoe UI',Tahoma,Arial,sans-serif;margin:0;direction:rtl;background:var(--bg);color:var(--text);font-size:15px;line-height:1.55}
+header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.brand{max-width:960px;margin:auto;padding:13px 16px 10px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.brand h1{font-size:19px;margin:0;font-weight:800;letter-spacing:-.2px}
+.brand small{font-size:11px;color:var(--sub)}
+.demo{font-size:12px;color:var(--amber);background:var(--amber-bg);border:1px solid #f1d9a8;border-radius:20px;padding:5px 10px;white-space:nowrap}
+main{max-width:960px;margin:auto;padding:15px 13px 110px}
+.section{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px;margin-bottom:14px;box-shadow:0 2px 8px rgba(20,35,65,.025)}
+h2{font-size:18px;margin:0 0 9px}h3{font-size:15px;margin:0 0 10px}.subtitle{font-size:13px;color:var(--sub);margin:2px 0 12px}
+.notice{border-radius:12px;background:var(--accent-light);padding:11px 13px;font-size:13px;color:#244a65;margin-bottom:13px}
+.notice.warning{background:var(--amber-bg);color:#7f5018}.notice.good{background:var(--green-bg);color:var(--green)}
+label{display:block;font-weight:650;font-size:13px;margin:0 0 5px}
+input,select,textarea{font:inherit;color:var(--text);background:var(--surface);border:1px solid #c5d0dc;border-radius:10px;padding:10px;width:100%;min-height:45px}
+textarea{min-height:80px;resize:vertical}
+button{font:inherit;cursor:pointer;border:1px solid #c9d5df;background:white;color:var(--text);border-radius:11px;min-height:44px;padding:9px 12px;font-weight:650}
+button:active{transform:translateY(1px)}button.primary{background:var(--accent);border-color:var(--accent);color:white}button.ghost{background:var(--accent-light);border-color:#d9e8f3;color:var(--accent)}button.danger{border-color:#eac9c9;color:var(--red)}button.tiny{font-size:12px;min-height:36px;padding:6px 10px}button:disabled{opacity:.45;cursor:not-allowed}
+.flex{display:flex;gap:9px;align-items:center}.flex.wrap{flex-wrap:wrap}.flex.between{justify-content:space-between}.flex>*{min-width:0}.grow{flex:1}.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.mini{font-size:12px;color:var(--sub)}.strong{font-weight:800}.muted{color:var(--sub)}.value{font-size:25px;font-weight:800;line-height:1.3;margin:4px 0}
+.field{margin-bottom:12px}.cardrow{border-top:1px solid #edf0f3;padding:12px 0;display:flex;align-items:center;gap:10px;justify-content:space-between}.cardrow:first-child{border-top:0}
+.time{direction:ltr;display:inline-block;unicode-bidi:isolate;font-variant-numeric:tabular-nums;font-weight:750}
+.status{font-size:12px;font-weight:650;border-radius:20px;padding:3px 9px;background:#e8edf2;color:#4d6274;display:inline-block}
+.status.held{background:var(--green-bg);color:var(--green)}.status.stopped{background:var(--amber-bg);color:var(--amber)}.status.missing{background:var(--red-bg);color:var(--red)}
+.person{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid #edf0f3;padding:8px 2px}.person:last-child{border-bottom:0}
+.person select{width:128px;min-height:42px}.person strong{font-size:14px;max-width:60%}
+.metric{padding:12px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}
+.subhead{padding:6px 0 12px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.separator{height:1px;background:var(--line);margin:16px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;box-shadow:0 -2px 14px #182a3a12;padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))}
+.bottom button{flex:1;font-size:12px;border:0;background:none;border-radius:9px;min-height:54px;color:#687c8d;padding:4px 5px}.bottom button.active{color:var(--accent);background:var(--accent-light);font-weight:800}.navico{font-size:20px;display:block;line-height:1.4}
+.bar{height:9px;background:#e4ebf1;border-radius:10px;overflow:hidden;margin-top:6px}.bar>span{display:block;height:100%;background:#2d7958;border-radius:10px}
+.gridweek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.weekbox{border:1px solid var(--line);border-radius:9px;padding:7px 2px;text-align:center;font-size:11px}.weekbox strong{display:block;font-size:15px;margin-top:3px}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:550px;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:right}th{background:#f6f8fb}
+.toast{display:none;position:fixed;z-index:40;bottom:80px;left:12px;right:12px;max-width:500px;margin:auto;border-radius:12px;background:#163c5a;color:white;padding:13px 15px;text-align:center;box-shadow:0 10px 32px #1e334650}.toast.visible{display:block}
+.hidden{display:none!important}.textcenter{text-align:center}
+footer{font-size:12px;color:#637588;text-align:center;margin-top:18px}
+@media(max-width:360px){.brand{padding:10px}.brand h1{font-size:16px}main{padding:10px 9px 110px}.section{padding:12px}.person select{width:110px}.person strong{font-size:13px}}
+@media(min-width:750px){main{padding:22px 20px 115px}.bottom{max-width:700px;margin:auto;border:1px solid var(--line);border-radius:15px 15px 0 0}}
+@media print{.bottom,button,header .demo{display:none!important}main{padding:0}.section{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div><h1>رقابة 001</h1><small>توثيق غيابات المتكونين — تجربة الهاتف</small></div><span class="demo">نسخة تجريبية محلية</span></div></header>
+<main id="app"></main>
+<nav class="bottom" id="nav" aria-label="القائمة الرئيسية"></nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function () {
+'use strict';
+const KEY='rakaba001_mobile_demo_v1';
+const DAYS=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const qs=s=>document.querySelector(s);
+const h=s=>String(s===null||s===undefined?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dateNow=()=>{let d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const dateObj=d=>new Date(d+'T12:00:00Z');
+const addDays=(d,n)=>{let x=dateObj(d);x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)};
+const sunday=d=>addDays(d,-dateObj(d).getUTCDay());
+const mstart=d=>d.slice(0,7)+'-01';
+const mend=d=>{let x=dateObj(mstart(d));x.setUTCMonth(x.getUTCMonth()+1);x.setUTCDate(0);return x.toISOString().slice(0,10)};
+const dayString=d=>d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
+const validDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&!isNaN(dateObj(d).getTime())&&dateObj(d).toISOString().slice(0,10)===d;
+const uid=()=>String(Date.now())+'-'+Math.random().toString(36).slice(2,9);
+const minutes=t=>Number(t.slice(0,2))*60+Number(t.slice(3,5));
+const ends=(t,n)=>{let m=minutes(t)+Number(n)*60;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')};
+const fmt=hours=>String(hours)+' ساعة';
+const fakeNames=Array.from({length:10},(_,i)=>'المتكون التجريبي '+String(i+1).padStart(2,'0'));
+function seed(){
+ const groups=[{id:'g1',name:'محاسبة وتسيير – فوج تجريبي',weekly:29},{id:'g2',name:'شبكات – فوج تجريبي',weekly:14}];
+ const students=groups.flatMap(g=>fakeNames.map((name,i)=>({id:g.id+'-s'+(i+1),groupId:g.id,name:name,active:true})));
+ const schedule=[];let idx=0;
+ [[0,['08:00','10:00','13:00']],[1,['08:00','10:00','13:00']],[2,['08:00','10:00','13:00']],[3,['08:00','10:00','13:00']],[4,['08:00','10:00','13:00']]].forEach(([day,times])=>{
+   times.forEach((time,i)=>{const duration=day===4&&i===2?1:2;schedule.push({id:'sl'+(++idx),groupId:'g1',weekday:day,start:time,duration});});
+ });
+ [[0,['08:00','10:00']],[1,['08:00','10:00']],[2,['08:00','10:00']],[3,['08:00']]].forEach(([day,times])=>times.forEach(time=>schedule.push({id:'sl'+(++idx),groupId:'g2',weekday:day,start:time,duration:2})));
+ return {version:1,groups,students,schedule,sessions:{},messages:[],audit:[]};
+}
+let db;let storageAvailable=true;
+try{const v=localStorage.getItem(KEY);db=v?JSON.parse(v):seed();localStorage.setItem(KEY,JSON.stringify(db));}catch(e){db=seed();storageAvailable=false}
+let groupId=db.groups[0]?db.groups[0].id:'g1';
+let day=dateNow();let tab='monitor';let selectedSlot=null,changed={};let editorState='held',editorReason='امتحانات خارجية';let currentNote='';let toastTimer=null;
+const group=()=>db.groups.find(g=>g.id===groupId);
+const students=()=>db.students.filter(s=>s.groupId===groupId&&s.active);
+const slotsOn=d=>db.schedule.filter(s=>s.groupId===groupId&&Number(s.weekday)===dateObj(d).getUTCDay()).sort((a,b)=>minutes(a.start)-minutes(b.start));
+const key=(slot,d)=>groupId+'|'+d+'|'+slot.id;
+const session=(slot,d)=>db.sessions[key(slot,d)];
+const absentHours=r=>r&&r.status==='held'?Object.values(r.absences||{}).reduce((n,v)=>n+Number(v||0),0):0;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db));storageAvailable=true;return true}catch(e){storageAvailable=false;return false}}
+function log(action,info){db.audit.push({at:new Date().toISOString(),action,info});if(db.audit.length>5000)db.audit=db.audit.slice(-5000)}
+function notice(msg){let t=qs('#toast');t.textContent=msg;t.className='toast visible';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.className='toast',3400)}
+const stat=(text,type)=>'<span class="status '+type+'">'+h(text)+'</span>';
+function shell(contents){const app=qs('#app');app.innerHTML=contents;const nav=qs('#nav');nav.innerHTML=[['monitor','◫','المراقب'],['inspector','▥','المفتش'],['messages','✉','المراسلات'],['setup','⚙','الإعدادات']].map(([t,icon,label])=>'<button type="button" data-action="tab" data-value="'+t+'" class="'+(tab===t?'active':'')+'"><span class="navico">'+icon+'</span>'+label+'</button>').join('')}
+function headerControls(){return '<div class="section"><div class="cols"><div><label for="group">الفوج</label><select id="group">'+db.groups.map(g=>'<option value="'+h(g.id)+'" '+(g.id===groupId?'selected':'')+'>'+h(g.name)+'</option>').join('')+'</select></div><div><label for="date">التاريخ</label><input id="date" type="date" value="'+day+'"></div></div><div class="flex between" style="margin-top:12px"><button class="tiny ghost" data-action="previous">اليوم السابق</button><span class="strong">'+DAYS[dateObj(day).getUTCDay()]+' · '+dayString(day)+'</span><button class="tiny ghost" data-action="next">اليوم التالي</button></div></div>'}
+function render(){
+ if(!db.groups.some(g=>g.id===groupId))groupId=db.groups[0].id;
+ if(tab==='monitor')return renderMonitor();
+ if(tab==='inspector')return renderInspector();
+ if(tab==='messages')return renderMessages();
+ renderSetup();
+}
+function renderMonitor(){
+ if(selectedSlot){return renderEditor()}
+ const list=slotsOn(day);let html=headerControls()+'<section class="section"><div class="subhead"><div><h2>حصص هذا اليوم</h2><div class="subtitle">يحدد المراقب حالة كل حصة ويُسجل الغائبين فقط.</div></div></div>';
+ if(list.length===0)html+='<div class="notice warning">لا توجد حصص مبرمجة في هذا اليوم. يمكنك تعديل الجدول من الإعدادات.</div>';
+ list.forEach(s=>{let r=session(s,day),st=r?(r.status==='held'?stat('أنجزت','held'):stat('لم تُنجز','stopped')):stat('لم تُوثَّق','missing');
+ html+='<div class="cardrow"><div><div><span class="time">'+h(s.start)+'–'+h(ends(s.start,s.duration))+'</span> · '+s.duration+' ساعة</div><div style="margin-top:7px">'+st+' '+(r&&r.status==='held'?'<span class="mini">('+absentHours(r)+' ساعة غياب)</span>':'')+'</div></div><button class="ghost" data-action="open" data-id="'+h(s.id)+'">'+(r?'عرض / تصحيح':'تسجيل')+'</button></div>'});
+ html+='</section>';
+ if(list.length){let missing=list.filter(s=>!session(s,day)).length;html+='<section class="section"><div class="cols">'+metric('حصص موثقة',list.length-missing,'من '+list.length)+' '+metric('حصص بلا بيانات',missing,'تحتاج إلى متابعة')+'</div><div class="separator"></div><button data-action="stopDay" style="width:100%">توقف التكوين في جميع حصص اليوم غير المنجزة</button><p class="mini">لا يتغير تسجيل الحصص التي ثبت أنها أُنجزت.</p></section>'}
+ if(!storageAvailable)html+='<div class="notice warning">لم يُتح حفظ البيانات في ذاكرة المتصفح. استخدم تصدير JSON للاحتفاظ بتجربتك.</div>';
+ html+='<footer>هذه نسخة تجريبية مستقلة. لا يوجد اتصال بحساب Google أو بقاعدة بيانات المؤسسة.</footer>';
+ shell(html);
+}
+function metric(title,n,desc){return '<div class="metric"><div class="mini">'+title+'</div><div class="value">'+n+'</div><div class="mini">'+desc+'</div></div>'}
+function renderEditor(){
+ const s=db.schedule.find(x=>x.id===selectedSlot);if(!s){selectedSlot=null;render();return}
+ const r=session(s,day);const state=editorState;
+ let html='<section class="section"><div class="flex between"><h2>تسجيل الحصة</h2><button class="tiny" data-action="back">رجوع</button></div><p class="subtitle">'+h(group().name)+' — '+DAYS[dateObj(day).getUTCDay()]+' '+day+'، <span class="time">'+h(s.start)+'–'+h(ends(s.start,s.duration))+'</span> ('+s.duration+' ساعة)</p>';
+ html+='<div class="field"><label for="status">حالة الحصة</label><select id="status"><option value="held" '+(state==='held'?'selected':'')+'>أُنجزت الحصة</option><option value="stopped" '+(state==='stopped'?'selected':'')+'>لم تُنجز الحصة</option></select></div>';
+ if(state==='held'){
+   html+='<p class="notice">الافتراضي: الجميع حاضر. غيّر حالة الغائب فقط. ويمكن تسجيل ساعة واحدة في حصة الساعتين.</p>';
+   let people=students();if(!people.length)html+='<div class="notice warning">لا توجد أسماء متكونين، أضفها أولًا من الإعدادات.</div>';
+   else html+='<div>'+people.map(p=>'<div class="person"><strong>'+h(p.name)+'</strong><select data-student="'+h(p.id)+'" aria-label="غياب '+h(p.name)+'">'+[0,1,2].filter(n=>n<=Number(s.duration)).map(n=>'<option value="'+n+'" '+(Number(changed[p.id]||0)===n?'selected':'')+'>'+(n===0?'حاضر':n+' ساعة غياب')+'</option>').join('')+'</select></div>').join('')+'</div>';
+   let count=Object.values(changed).filter(n=>Number(n)>0).length;let sum=Object.values(changed).reduce((a,b)=>a+Number(b||0),0);
+   html+='<div class="notice good" id="editorSummary" style="margin:14px 0">عدد الغائبين: '+count+' — الساعات: '+sum+'</div>';
+ }else{
+   html+='<div class="notice warning">لن تُسجَّل غيابات على المتكونين إذا لم تُنجز الحصة.</div><div class="field"><label for="reason">سبب عدم إنجاز الحصة</label><select id="reason">'+['امتحانات خارجية','غياب الأستاذ','عدم توفر القاعة أو الوسائل','سبب تنظيمي آخر'].map(x=>'<option value="'+h(x)+'" '+(editorReason===x?'selected':'')+'>'+h(x)+'</option>').join('')+'</select></div>';
+ }
+ html+='<div class="field"><label for="note">ملاحظة اختيارية</label><textarea id="note" placeholder="تفاصيل إضافية عند الحاجة">'+h(currentNote)+'</textarea></div><div class="actions"><button class="primary" data-action="saveSlot">حفظ الحصة</button><button data-action="back">إلغاء</button></div>';
+ if(r)html+='<div class="mini" style="margin-top:13px">آخر تعديل: '+h(r.at)+' — النسخة '+r.version+'</div>';
+ html+='</section>';shell(html);
+}
+function enterEditor(id){selectedSlot=id;let s=db.schedule.find(x=>x.id===id);let r=session(s,day);changed=r&&r.status==='held'?Object.assign({},r.absences):{};editorState=r?r.status:'held';editorReason=r&&r.reason?r.reason:'امتحانات خارجية';currentNote=r&&r.note?r.note:'';render();}
+function saveSlot(){let s=db.schedule.find(x=>x.id===selectedSlot);if(!s)return;let status=qs('#status').value,reason=status==='stopped'?qs('#reason').value:'';let note=qs('#note').value.trim().slice(0,500);if(status==='held'&&!students().length)return notice('أضف أسماء المتكونين أولًا.');
+ let keystr=key(s,day),old=db.sessions[keystr],abs={};if(status==='held')students().forEach(p=>{let v=Number(changed[p.id]||0);if(v>0&&v<=s.duration)abs[p.id]=v});
+ db.sessions[keystr]={status,reason,note,absences:abs,at:new Date().toLocaleString('ar-DZ'),version:(old?old.version:0)+1};log('save_session',{key:keystr,status,reason,absences:abs});save();selectedSlot=null;changed={};render();notice('حُفظت الحصة محليًا على هذا الجهاز.');}
+function getStats(from,to){
+ let expected=0,missing=0,held=0,stopped=0,heldHours=0,stoppedHours=0,absent=0,possible=0,dayRows=[],personTotals={};
+ for(let d=from;d<=to;d=addDays(d,1)){
+  let st={date:d,scheduled:0,missing:0,held:0,stopped:0};
+  slotsOn(d).forEach(s=>{
+   expected+=s.duration;st.scheduled++;const r=session(s,d);
+   if(!r){missing++;st.missing++;return}
+   if(r.status==='held'){
+    held++;st.held++;heldHours+=s.duration;possible+=s.duration*students().length;
+    Object.entries(r.absences||{}).forEach(([sid,v])=>{if(db.students.find(p=>p.id===sid&&p.active)){absent+=Number(v);personTotals[sid]=(personTotals[sid]||0)+Number(v)}})
+   }else{stopped++;st.stopped++;stoppedHours+=s.duration}
+  });dayRows.push(st);
+ }
+ return {expected,missing,held,stopped,heldHours,stoppedHours,absent,possible,days:dayRows,personTotals};
+}
+function renderInspector(){
+ const start=sunday(day),end=addDays(start,6),st=getStats(start,end);const month=getStats(mstart(day),mend(day));const scheduledWeekly=db.schedule.filter(x=>x.groupId===groupId).reduce((a,b)=>a+Number(b.duration),0);
+ let html=headerControls()+'<section class="section"><h2>لوحة متابعة المفتش</h2><p class="subtitle">الأسبوع: '+dayString(start)+' إلى '+dayString(end)+'</p><div class="cols">'+metric('الحجم الأسبوعي المعلن',group().weekly+' ساعة','قابل للتغيير')+metric('مجموع الجدول',scheduledWeekly+' ساعة','من الحصص المبرمجة')+metric('حصص منجزة',st.held,'موثقة')+metric('حصص توقفت',st.stopped,'لأسباب منظمة')+metric('حصص بلا بيانات',st.missing,'يجب استكمالها')+metric('ساعات الغياب',st.absent,'خلال الحصص المنجزة')+'</div>';
+ if(scheduledWeekly!==Number(group().weekly))html+='<div class="notice warning" style="margin-top:12px">تنبيه: الحجم الأسبوعي المعلن ('+group().weekly+') مختلف عن مجموع حصص الجدول ('+scheduledWeekly+').</div>';
+ let rate=st.possible?((100*st.absent/st.possible).toFixed(1)+'%'):'غير قابلة للحساب';
+ html+='<div class="separator"></div><div class="flex between"><span class="strong">نسبة الغياب لهذا الأسبوع</span><strong>'+rate+'</strong></div><div class="bar"><span style="width:'+(st.possible?Math.min(100,st.absent*100/st.possible):0)+'%"></span></div><p class="mini">المقام هو مجموع الساعات التي كان على المتكونين حضورها في الحصص المنجزة فقط. إذا لم تُنجز حصص فالنتيجة «غير قابلة للحساب».</p></section>';
+ html+='<section class="section"><h3>اكتمال التوثيق اليومي</h3><div class="gridweek">'+st.days.map(x=>'<div class="weekbox"><div>'+DAYS[dateObj(x.date).getUTCDay()].slice(0,3)+'</div><strong>'+x.held+'/'+x.scheduled+'</strong><div class="mini">'+(x.missing?'ناقص':'مكتمل')+'</div></div>').join('')+'</div><p class="mini" style="margin-top:12px">القيمة الأولى حصص منجزة؛ وتُحتسب الحصص المتوقفة موثقة لكن غير منجزة.</p></section>';
+ html+='<section class="section"><h3>ملخص الشهر '+day.slice(0,7)+'</h3><div class="cols">'+metric('ساعات التكوين المنجزة',month.heldHours,'من الحصص المؤكدة')+metric('ساعات التوقف',month.stoppedHours,'لا تُعد غيابات')+metric('ساعات الغياب المسجلة',month.absent,'مجموع المتكونين')+metric('الحصص التي لم تُوثَّق',month.missing,'لا تُحسب حضورًا')+'</div></section>';
+ let totals=students().map(p=>({name:p.name,hours:month.personTotals[p.id]||0})).sort((a,b)=>b.hours-a.hours);
+ html+='<section class="section"><h3>الغياب الشهري حسب المتكون</h3><div class="tablewrap"><table><thead><tr><th>المتكون</th><th>ساعات الغياب</th></tr></thead><tbody>'+totals.map(x=>'<tr><td>'+h(x.name)+'</td><td>'+x.hours+'</td></tr>').join('')+'</tbody></table></div><div class="separator"></div><div class="actions"><button class="primary" data-action="shareSummary">مشاركة الملخص</button><button data-action="export">تصدير بيانات التجربة</button></div></section>';
+ html+='<div class="notice warning">هذه النتائج تخص جهازك فقط، وهي مثال لتجربة واجهة المفتش وليست متابعة فعلية للمؤسسة.</div>';shell(html);
+}
+function renderMessages(){let msgs=db.messages.filter(m=>m.groupId===groupId).slice().reverse();let html=headerControls()+'<section class="section"><h2>التواصل مع المفتش</h2><div class="notice warning">في هذه النسخة تُحفظ المراسلات على هذا الهاتف فقط. استخدم «مشاركة الملخص» لإرساله يدويًا؛ لا توجد مزامنة مباشرة مع المفتش بعد.</div><label for="message">ملاحظة تخص الفوج</label><textarea id="message" placeholder="مثال: توقفت حصص الثلاثاء بسبب امتحانات خارجية، وتحتاج إلى برمجة تعويض."></textarea><div class="actions" style="margin-top:9px"><button class="primary" data-action="saveMessage">حفظ الملاحظة</button><button data-action="shareSummary">مشاركة ملخص الغياب</button></div></section>';
+ html+='<section class="section"><h3>الملاحظات المسجلة على الجهاز</h3>'+(msgs.length?msgs.map(m=>'<div class="cardrow"><div><strong>'+h(m.text)+'</strong><div class="mini">'+h(m.at)+'</div></div></div>').join(''):'<p class="muted">لا توجد ملاحظات بعد.</p>')+'</section>';shell(html)}
+function renderSetup(){
+ let total=db.schedule.filter(s=>s.groupId===groupId).reduce((n,s)=>n+Number(s.duration),0);
+ let html='<section class="section"><h2>إعدادات التجربة</h2><p class="subtitle">يمكنك تغيير الفوج التجريبي، إضافة أسماء افتراضية، وتعديل حجم الأسبوع وإدراج حصص ساعة أو ساعتين.</p><div class="field"><label for="group">اختر الفوج</label><select id="group">'+db.groups.map(g=>'<option value="'+h(g.id)+'" '+(g.id===groupId?'selected':'')+'>'+h(g.name)+'</option>').join('')+'</select></div><div class="field"><label>الحجم الساعي المبرمج لهذا الفوج</label><div class="flex"><input id="weeklyHours" type="number" min="1" max="36" step="1" value="'+group().weekly+'"><button data-action="hours">حفظ</button></div><p class="mini">مجموع جدول الحصص الحالي: '+total+' ساعة.</p></div></section>';
+ html+='<section class="section"><h3>إضافة حصة أسبوعية</h3><div class="cols"><div class="field"><label for="weekday">اليوم</label><select id="weekday">'+DAYS.map((v,i)=>'<option value="'+i+'">'+v+'</option>').join('')+'</select></div><div class="field"><label for="start">البداية</label><input id="start" type="time" value="08:00"></div><div class="field"><label for="duration">المدة</label><select id="duration"><option value="2">ساعتان</option><option value="1">ساعة</option></select></div></div><button class="primary" data-action="addSlot">إضافة الحصة</button>';
+ let list=db.schedule.filter(x=>x.groupId===groupId).sort((a,b)=>a.weekday-b.weekday||minutes(a.start)-minutes(b.start));html+='<div class="separator"></div>'+list.map(s=>'<div class="cardrow"><span>'+DAYS[s.weekday]+' · <span class="time">'+h(s.start)+'–'+h(ends(s.start,s.duration))+'</span> ('+s.duration+' ساعة)</span><button class="tiny danger" data-action="deleteSlot" data-id="'+h(s.id)+'">حذف</button></div>').join('')+'</section>';
+ html+='<section class="section"><h3>قائمة المتكونين التجريبية</h3><div class="flex"><input id="studentName" placeholder="اسم متكون جديد"><button data-action="addStudent">إضافة</button></div><p class="mini">لا تستعمل أسماء حقيقية حساسة في ملف التجربة الذي ستشاركه عبر GitHub.</p><div style="max-height:300px;overflow:auto">'+students().map(s=>'<div class="cardrow"><strong>'+h(s.name)+'</strong><button data-action="removeStudent" data-id="'+h(s.id)+'" class="tiny danger">إلغاء</button></div>').join('')+'</div></section>';
+ html+='<section class="section"><h3>حفظ التجربة واستعادتها</h3><p class="mini">تُحفظ بيانات الاختبار تلقائيًا محليًا في المتصفح إن سمح بذلك. التصدير إلى JSON يوفر نسخة يمكن نقلها بين هاتف وحاسوب.</p><div class="actions"><button class="primary" data-action="export">تصدير JSON</button><button data-action="triggerImport">استيراد JSON</button></div><input id="importFile" class="hidden" type="file" accept="application/json,.json"><div class="separator"></div><button class="danger" style="width:100%" data-action="reset">إعادة ضبط جميع بيانات التجربة</button></section>';
+ html+='<footer>نسخة رقم 0.1 — بلا تسجيل دخول وبلا اتصال بخادم Google.</footer>';shell(html)}
+function reportText(){const st=getStats(sunday(day),addDays(sunday(day),6));let g=group();return 'رقابة 001 — ملخص تجريبي للغيابات\nالفوج: '+g.name+'\nالأسبوع: '+sunday(day)+' إلى '+addDays(sunday(day),6)+'\nالحجم الأسبوعي المعلن: '+g.weekly+' ساعة\nالحصص المنجزة: '+st.held+'\nالحصص المتوقفة: '+st.stopped+'\nالحصص غير الموثقة: '+st.missing+'\nساعات الغياب: '+st.absent+'\nنسبة الغياب: '+(st.possible?(100*st.absent/st.possible).toFixed(1)+'%':'غير قابلة للحساب')+'\n\nهذا ملخص تجريبي محلي، وليس تقريرًا مؤسساتيًا معتمدًا.'}
+function downloadJson(){let text=JSON.stringify(db,null,2),blob=new Blob([text],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='rakaba001-demo-'+dateNow()+'.json';a.style.display='none';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);notice('حُضّرت نسخة JSON من بيانات التجربة.')}
+function validateImport(o){if(!o||o.version!==1||!Array.isArray(o.groups)||!Array.isArray(o.students)||!Array.isArray(o.schedule)||!o.sessions||typeof o.sessions!=='object'||!Array.isArray(o.messages)||!Array.isArray(o.audit))throw Error('ملف غير متوافق مع صيغة النسخة التجريبية.');if(JSON.stringify(o).length>1000000)throw Error('ملف كبير جدًا.');return o}
+function handleAction(button){
+ const a=button.dataset.action;
+ if(a==='tab'){tab=button.dataset.value;selectedSlot=null;render();return}
+ if(a==='previous'||a==='next'){day=addDays(day,a==='previous'?-1:1);render();return}
+ if(a==='open'){enterEditor(button.dataset.id);return}
+ if(a==='back'){selectedSlot=null;render();return}
+ if(a==='saveSlot'){saveSlot();return}
+ if(a==='stopDay'){
+  let list=slotsOn(day),todo=list.filter(s=>!session(s,day)||session(s,day).status!=='held');if(!todo.length)return notice('لا توجد حصص غير منجزة لتوثيقها.');
+  let reason=window.prompt('سبب توقف الحصص التي لم تُنجز:','امتحانات خارجية');if(reason===null)return;reason=reason.trim();if(reason.length<3)return notice('يجب ذكر سبب واضح.');
+  if(!window.confirm('سيُسجَّل توقف '+todo.length+' حصص. لن تُعدّل الحصص المسجلة على أنها منجزة. هل توافق؟'))return;
+  todo.forEach(s=>{let k=key(s,day),old=db.sessions[k];db.sessions[k]={status:'stopped',reason,note:'',absences:{},version:(old?old.version:0)+1,at:new Date().toLocaleString('ar-DZ')};log('stop_session',{key:k,reason})});save();render();notice('وُثِّق توقف '+todo.length+' حصص.');return;
+ }
+ if(a==='saveMessage'){let text=qs('#message').value.trim();if(text.length<3)return notice('اكتب ملاحظة أولًا.');db.messages.push({id:uid(),groupId,text,at:new Date().toLocaleString('ar-DZ')});log('new_message',{groupId});save();render();notice('حُفظت الملاحظة محليًا.');return}
+ if(a==='shareSummary'){let text=reportText();if(navigator.share)navigator.share({title:'رقابة 001 — ملخص تجريبي',text}).catch(()=>{});else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(()=>notice('نُسخ الملخص إلى الحافظة.')).catch(()=>window.prompt('انسخ الملخص:',text));else window.prompt('انسخ الملخص:',text);return}
+ if(a==='hours'){let n=Number(qs('#weeklyHours').value);if(!Number.isInteger(n)||n<1||n>36)return notice('الحجم الساعي من 1 إلى 36 ساعة.');group().weekly=n;log('update_hours',{groupId,hours:n});save();render();notice('تم تحديث الحجم الساعي.');return}
+ if(a==='addSlot'){
+  let weekday=Number(qs('#weekday').value),start=qs('#start').value,duration=Number(qs('#duration').value);
+  if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(start)||![1,2].includes(duration)||minutes(start)+duration*60>1440)return notice('توقيت الحصة غير صالح.');
+  if(db.schedule.some(s=>s.groupId===groupId&&s.weekday===weekday&&minutes(start)<minutes(s.start)+s.duration*60&&minutes(s.start)<minutes(start)+duration*60))return notice('تتداخل هذه الحصة مع حصة أخرى.');
+  db.schedule.push({id:uid(),groupId,weekday,start,duration});log('add_slot',{groupId,weekday,start,duration});save();render();notice('أُضيفت الحصة.');return;
+ }
+ if(a==='deleteSlot'){let id=button.dataset.id;let used=Object.keys(db.sessions).some(k=>k.endsWith('|'+id));if(used)return notice('لا يمكن حذف حصة لها تسجيلات؛ احفظ بيانات التجربة ثم أعد ضبطها إذا أردت البدء من جديد.');if(!window.confirm('حذف هذه الحصة من الجدول؟'))return;db.schedule=db.schedule.filter(s=>s.id!==id);log('delete_slot',{id});save();render();return}
+ if(a==='addStudent'){let name=qs('#studentName').value.trim();if(name.length<3)return notice('أدخل اسم المتكون.');if(students().some(s=>s.name===name))return notice('الاسم موجود في الفوج.');db.students.push({id:uid(),groupId,name,active:true});log('add_student',{groupId});save();render();notice('تمت إضافة الاسم.');return}
+ if(a==='removeStudent'){let id=button.dataset.id;if(!window.confirm('إلغاء هذا المتكون من القائمة التجريبية؟ قد تتغير إحصاءات الفترة السابقة.'))return;let s=db.students.find(x=>x.id===id);if(s)s.active=false;log('remove_student',{id});save();render();return}
+ if(a==='export'){downloadJson();return}
+ if(a==='triggerImport'){qs('#importFile').click();return}
+ if(a==='reset'){if(!window.confirm('سيُحذف كل ما سجلته محليًا في التجربة. هل تريد إعادة الضبط؟'))return;db=seed();save();groupId=db.groups[0].id;selectedSlot=null;tab='monitor';render();notice('أُعيدت البيانات التجريبية.');return}
+}
+document.addEventListener('click',e=>{let b=e.target.closest('[data-action]');if(b)try{handleAction(b)}catch(err){notice('حدث خطأ: '+err.message)}});
+document.addEventListener('change',e=>{
+ if(e.target.id==='group'){groupId=e.target.value;selectedSlot=null;render()}
+ if(e.target.id==='date'){if(validDate(e.target.value)){day=e.target.value;selectedSlot=null;render()}else notice('تاريخ غير صالح.')}
+ if(e.target.id==='status'){editorState=e.target.value;currentNote=qs('#note').value;render()}
+ if(e.target.id==='reason'){editorReason=e.target.value}
+ if(e.target.dataset.student){changed[e.target.dataset.student]=Number(e.target.value);const sum=qs('#editorSummary');if(sum){const count=Object.values(changed).filter(x=>x>0).length;const hours=Object.values(changed).reduce((a,b)=>a+Number(b||0),0);sum.textContent='عدد الغائبين: '+count+' — الساعات: '+hours}}
+ if(e.target.id==='importFile'){
+  const file=e.target.files[0];if(!file)return;if(file.size>1000000)return notice('الملف أكبر من الحد المسموح.');const reader=new FileReader();reader.onload=()=>{try{let imported=validateImport(JSON.parse(reader.result));if(!window.confirm('استيراد هذا الملف سيستبدل بيانات التجربة الحالية. هل توافق؟'))return;db=imported;save();groupId=db.groups[0].id;selectedSlot=null;tab='monitor';render();notice('استُوردت بيانات التجربة بنجاح.')}catch(error){notice('تعذر الاستيراد: '+error.message)}};reader.readAsText(file);
+ }
+});
+render();
+})();
+</script>
+</body>
+</html>
