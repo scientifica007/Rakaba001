@@ -28,7 +28,7 @@ function rows_(name) {
   const keys=a.shift().map(clean_);
   return a.filter(r=>r.some(x=>x!==''&&x!==null)).map((r,i)=>{
     const obj={_row:i+2};
-    keys.forEach((key,j)=>obj[key]=r[j] instanceof Date?Utilities.formatDate(r[j],TZ,'yyyy-MM-dd'):r[j]);
+    keys.forEach((key,j)=>obj[key]=r[j] instanceof Date?Utilities.formatDate(r[j],TZ,key==='start'?'HH:mm':'yyyy-MM-dd'):r[j]);
     return obj;
   });
 }
@@ -124,7 +124,7 @@ function context_(u,p) {
   const keys=new Set(sessions.map(s=>s.session_key+'|'+s.version));
   const attendance=rows_('Attendance').filter(a=>keys.has(a.session_key+'|'+a.version));
   const messages=rows_('Messages').filter(m=>gids.includes(m.group_id)).slice(-100);
-  const overrides=rows_('WeeklyOverrides').filter(x=>gids.includes(x.group_id)&&x.week_start>=from.slice(0,7)+'-01');
+  const overrides=rows_('WeeklyOverrides').filter(x=>gids.includes(x.group_id)&&x.week_start>=from&&x.week_start<=to);
   return {user:{username:u.username,role:u.role,groups:u.groups},from:from,to:to,groups:groups,
     students:students,schedule:schedule,sessions:sessions,attendance:attendance,
     messages:messages,overrides:overrides};
